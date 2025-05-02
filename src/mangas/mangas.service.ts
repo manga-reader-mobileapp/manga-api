@@ -5,6 +5,97 @@ import { PrismaService } from 'src/database/PrismaService';
 export class MangasService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findAllByCategoryId(categoryId: string, userId: string) {
+    const mangas = await this.prisma.savedManga.findMany({
+      where: {
+        categoryId,
+        userId,
+      },
+      select: {
+        manga: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            img: true,
+            url: true,
+            chapters: true,
+            source: {
+              select: {
+                id: true,
+                url: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return mangas.map((manga) => {
+      return {
+        id: manga.manga.id,
+        title: manga.manga.title,
+        description: manga.manga.description,
+        img: manga.manga.img,
+        chapters: manga.manga.chapters,
+        source: manga.manga.source.id,
+        sourceUrl: manga.manga.source.url,
+        url: manga.manga.url,
+      };
+    });
+  }
+
+  async findUniqueManga(id: string, userId: string) {
+    const manga = await this.prisma.manga.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        img: true,
+        url: true,
+        chapters: true,
+        History: {
+          where: {
+            userId,
+          },
+          select: {
+            chapter: true,
+          },
+        },
+        source: {
+          select: {
+            id: true,
+            url: true,
+          },
+        },
+        SavedManga: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!manga) {
+      throw new Error('Manga not found');
+    }
+
+    return {
+      title: manga.title,
+      description: manga.description,
+      img: manga.img,
+      url: manga.url,
+      chapters: manga.chapters,
+      source: manga.source.id,
+      sourceUrl: manga.source.url,
+      isFavorite: manga.SavedManga.length > 0,
+      lastChapter: manga.History[0] ? manga.History[0].chapter : 0,
+    };
+  }
+
   async createSavedManga(userId: string, mangaId: string) {
     const categoryId = await this.prisma.category.findFirst({
       where: {
@@ -43,7 +134,12 @@ export class MangasService {
     url: string,
     sourceId: string,
     userId: string,
-    data: { title: string; author: string; description: string; img: string },
+    data: {
+      title: string;
+      description: string;
+      img: string;
+      chapters: string;
+    },
   ) {
     const manga = await this.prisma.manga.findFirst({
       where: {
@@ -77,9 +173,9 @@ export class MangasService {
     const mangaId = await this.prisma.manga.create({
       data: {
         title: data.title,
-        author: data.author,
         description: data.description,
         img: data.img,
+        chapters: Number(data.chapters),
         url,
         source: {
           connect: {
@@ -95,31 +191,6 @@ export class MangasService {
     await this.createSavedManga(userId, mangaId.id);
   }
 
-  async findAllByCategoryId(categoryId: string) {
-    return await this.prisma.savedManga.findMany({
-      where: {
-        categoryId,
-      },
-      select: {
-        id: true,
-        manga: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            img: true,
-            chapters: true,
-            source: {
-              select: {
-                url: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
   async verifySavedManga(sourceId: string, url: string, userId: string) {
     const savedManga = await this.prisma.savedManga.findFirst({
       where: {
@@ -133,8 +204,6 @@ export class MangasService {
         id: true,
       },
     });
-
-    console.log(savedManga);
 
     if (!savedManga) {
       return {

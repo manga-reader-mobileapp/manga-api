@@ -43,7 +43,6 @@ model Category {
 model Manga {
   id          String @id @default(uuid())
   title       String
-  author      String
   description String
   img         String
 
