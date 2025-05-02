@@ -8,14 +8,83 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String
-  email    String @unique
+  email    String  @unique
   password String
-
   isActive Boolean
+
+  SavedManga SavedManga[]
+  Category   Category[]
 
   created_at DateTime @default(now())
 
   @@map("user")
+}
+
+model Category {
+  id          String @id @default(uuid())
+  name        String
+  orderKanban Int
+
+  SavedManga SavedManga[]
+
+  user User @relation(fields: [userId], references: [id])
+
+  userId String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("category")
+}
+
+model Manga {
+  id          String @id @default(uuid())
+  title       String
+  author      String
+  description String
+  img         String
+
+  chapters Int @default(0)
+
+  SavedManga SavedManga[]
+  source     Source       @relation(fields: [sourceId], references: [id])
+
+  sourceId String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("manga")
+}
+
+model Source {
+  id String @id @default(uuid())
+
+  url String @unique
+
+  Manga Manga[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("source")
+}
+
+model SavedManga {
+  id String @id @default(uuid())
+
+  manga    Manga    @relation(fields: [mangaId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  mangaId    String
+  categoryId String
+  userId     String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("saved_manga")
 }
