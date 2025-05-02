@@ -17,7 +17,8 @@ model User {
   SavedManga SavedManga[]
   Category   Category[]
 
-  created_at DateTime @default(now())
+  created_at DateTime  @default(now())
+  History    History[]
 
   @@map("user")
 }
@@ -46,6 +47,8 @@ model Manga {
   description String
   img         String
 
+  url String
+
   chapters Int @default(0)
 
   SavedManga SavedManga[]
@@ -53,14 +56,16 @@ model Manga {
 
   sourceId String
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  History    History[]
 
   @@map("manga")
 }
 
 model Source {
-  id String @id @default(uuid())
+  id   String @id @default(uuid())
+  name String @unique
 
   url String @unique
 
@@ -87,4 +92,20 @@ model SavedManga {
   updated_at DateTime @updatedAt
 
   @@map("saved_manga")
+}
+
+model History {
+  id      String @id @default(uuid())
+  chapter Int
+
+  manga Manga @relation(fields: [mangaId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  mangaId String
+  userId  String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("history")
 }

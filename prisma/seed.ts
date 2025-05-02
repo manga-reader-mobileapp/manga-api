@@ -10,6 +10,40 @@ class PrismaService extends PrismaClient implements OnModuleInit {
 async function main() {
   const prisma = new PrismaService();
 
+  const sources = [
+    {
+      name: 'manga-livre',
+      url: 'https://mangalivre.tv',
+    },
+  ];
+
+  for (const source of sources) {
+    const exist = await prisma.source.findFirst({
+      where: {
+        name: source.name,
+      },
+    });
+
+    if (exist) {
+      await prisma.source.update({
+        where: {
+          name: source.name,
+        },
+        data: {
+          url: source.url,
+        },
+      });
+      continue;
+    }
+
+    await prisma.source.create({
+      data: {
+        name: source.name,
+        url: source.url,
+      },
+    });
+  }
+
   const exist = await prisma.user.findFirst({
     where: {
       email: 'seu@email.com',
