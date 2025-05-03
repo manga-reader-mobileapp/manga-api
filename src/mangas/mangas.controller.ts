@@ -20,13 +20,13 @@ export class MangasController {
   @Get('/:categoryId')
   async getAllByCategoryId(
     @Param('categoryId') categoryId: string,
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
   ) {
     return this.mangasService.findAllByCategoryId(categoryId, user.id);
   }
 
   @Get('/unique/:id')
-  async getUniqueManga(@Param('id') id: string, @CurrentUser('id') user: User) {
+  async getUniqueManga(@Param('id') id: string, @CurrentUser() user: User) {
     return this.mangasService.findUniqueManga(id, user.id);
   }
 
@@ -42,7 +42,7 @@ export class MangasController {
   async getAll(
     @Param('sourceId') sourceId: string,
     @Body() body: { url: string },
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
   ) {
     return this.mangasService.verifySavedManga(sourceId, body.url, user.id);
   }
@@ -58,7 +58,7 @@ export class MangasController {
       url: string;
       chapters: string;
     },
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
   ) {
     return this.mangasService.saveManga(body.url, sourceId, user.id, body);
   }
@@ -66,7 +66,7 @@ export class MangasController {
   @Post('favorite-saved/:mangaId')
   async createSavedManga(
     @Param('mangaId') mangaId: string,
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
   ) {
     return this.mangasService.createSavedManga(user.id, mangaId);
   }
@@ -75,7 +75,7 @@ export class MangasController {
   async deleteSavedManga(
     @Param('sourceId') sourceId: string,
     @Body() body: { url: string },
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
   ) {
     return this.mangasService.deleteSavedManga(sourceId, body.url, user.id);
   }
@@ -83,7 +83,7 @@ export class MangasController {
   @Post('/update-last-read/:mangaId/')
   async updatedLastRead(
     @Param('mangaId') mangaId: string,
-    @CurrentUser('id') user: User,
+    @CurrentUser() user: User,
     @Body() body: { chapter: string; forceUpdate?: boolean },
   ) {
     return this.mangasService.updatedLastRead(
@@ -92,5 +92,10 @@ export class MangasController {
       user.id,
       body.forceUpdate,
     );
+  }
+
+  @Get('/all/history')
+  async getHistory(@CurrentUser() user: User) {
+    return this.mangasService.listHistory(user.id);
   }
 }
