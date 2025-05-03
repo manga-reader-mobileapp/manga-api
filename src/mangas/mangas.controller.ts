@@ -63,6 +63,14 @@ export class MangasController {
     return this.mangasService.saveManga(body.url, sourceId, user.id, body);
   }
 
+  @Post('favorite-saved/:mangaId')
+  async createSavedManga(
+    @Param('mangaId') mangaId: string,
+    @CurrentUser('id') user: User,
+  ) {
+    return this.mangasService.createSavedManga(user.id, mangaId);
+  }
+
   @Delete('/unfavorite/:sourceId')
   async deleteSavedManga(
     @Param('sourceId') sourceId: string,
@@ -70,5 +78,19 @@ export class MangasController {
     @CurrentUser('id') user: User,
   ) {
     return this.mangasService.deleteSavedManga(sourceId, body.url, user.id);
+  }
+
+  @Post('/update-last-read/:mangaId/')
+  async updatedLastRead(
+    @Param('mangaId') mangaId: string,
+    @CurrentUser('id') user: User,
+    @Body() body: { chapter: string; forceUpdate?: boolean },
+  ) {
+    return this.mangasService.updatedLastRead(
+      mangaId,
+      body.chapter,
+      user.id,
+      body.forceUpdate,
+    );
   }
 }

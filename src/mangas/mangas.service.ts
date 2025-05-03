@@ -26,18 +26,36 @@ export class MangasService {
                 url: true,
               },
             },
+            History: {
+              select: {
+                chapter: true,
+              },
+              where: {
+                userId,
+              },
+            },
           },
         },
       },
     });
 
     return mangas.map((manga) => {
+      const lastChapter = Number.isNaN(Number(manga.manga.History[0]?.chapter))
+        ? 0
+        : Number(manga.manga.History[0].chapter);
+
+      const chapter = Number.isNaN(Number(manga.manga.chapters))
+        ? 0
+        : Number(manga.manga.chapters);
+
+      const chapters = chapter - lastChapter;
+
       return {
         id: manga.manga.id,
         title: manga.manga.title,
         description: manga.manga.description,
         img: manga.manga.img,
-        chapters: manga.manga.chapters,
+        chapters,
         source: manga.manga.source.id,
         sourceUrl: manga.manga.source.url,
         url: manga.manga.url,
@@ -76,6 +94,9 @@ export class MangasService {
           select: {
             id: true,
           },
+          where: {
+            userId,
+          },
         },
       },
     });
@@ -111,6 +132,7 @@ export class MangasService {
       select: {
         chapters: true,
         title: true,
+        id: true,
         source: {
           select: {
             url: true,
@@ -125,6 +147,7 @@ export class MangasService {
       chapters: manga.chapters,
       title: manga.title,
       url: manga.source.url,
+      id: manga.id,
     };
   }
 
@@ -207,7 +230,7 @@ export class MangasService {
         title: data.title,
         description: data.description,
         img: data.img,
-        chapters: Number(data.chapters),
+        chapters: data.chapters,
         url,
         source: {
           connect: {
@@ -258,5 +281,56 @@ export class MangasService {
         },
       },
     });
+  }
+
+  async updatedLastRead(
+    mangaId: string,
+    chapter: string,
+    userId: string,
+    forceUpdate: boolean,
+  ) {
+    const history = await this.prisma.history.findFirst({
+      where: {
+        mangaId,
+        userId,
+      },
+      select: {
+        chapter: true,
+        id: true,
+      },
+    });
+
+    if (!history) {
+      await this.prisma.history.create({
+        data: {
+          mangaId,
+          userId,
+          chapter,
+        },
+      });
+
+      return;
+    }
+
+    const lastChapter = Number.isNaN(Number(history.chapter))
+      ? 0
+      : Number(history.chapter);
+
+    const numberChapter = Number.isNaN(Number(chapter)) ? 0 : Number(chapter);
+
+    if (numberChapter < lastChapter && !forceUpdate) {
+      return;
+    }
+
+    await this.prisma.history.update({
+      where: {
+        id: history.id,
+      },
+      data: {
+        chapter: chapter,
+      },
+    });
+
+    return;
   }
 }

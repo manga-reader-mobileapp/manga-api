@@ -48,7 +48,7 @@ model Manga {
 
   url String
 
-  chapters Int @default(0)
+  chapters String @default("0")
 
   SavedManga SavedManga[]
   source     Source       @relation(fields: [sourceId], references: [id])
@@ -95,7 +95,7 @@ model SavedManga {
 
 model History {
   id      String @id @default(uuid())
-  chapter Int
+  chapter String
 
   manga Manga @relation(fields: [mangaId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
