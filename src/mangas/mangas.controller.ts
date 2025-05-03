@@ -30,6 +30,14 @@ export class MangasController {
     return this.mangasService.findUniqueManga(id, user.id);
   }
 
+  @Get('/infos/:sourceId/:mangaUrl')
+  async getInfosPages(
+    @Param('sourceId') sourceId: string,
+    @Param('mangaUrl') mangaUrl: string,
+  ) {
+    return this.mangasService.getInfosPages(sourceId, mangaUrl);
+  }
+
   @Post('/favorited/:sourceId')
   async getAll(
     @Param('sourceId') sourceId: string,

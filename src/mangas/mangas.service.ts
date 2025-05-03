@@ -69,6 +69,7 @@ export class MangasService {
           select: {
             id: true,
             url: true,
+            name: true,
           },
         },
         SavedManga: {
@@ -90,9 +91,40 @@ export class MangasService {
       url: manga.url,
       chapters: manga.chapters,
       source: manga.source.id,
+      sourceName: manga.source.name,
       sourceUrl: manga.source.url,
       isFavorite: manga.SavedManga.length > 0,
-      lastChapter: manga.History[0] ? manga.History[0].chapter : 0,
+      ...(manga.History && manga.History[0]
+        ? { lastChapter: manga.History[0].chapter }
+        : {}),
+    };
+  }
+
+  async getInfosPages(sourceId: string, mangaUrl: string) {
+    const manga = await this.prisma.manga.findFirst({
+      where: {
+        source: {
+          name: sourceId,
+        },
+        url: mangaUrl,
+      },
+      select: {
+        chapters: true,
+        title: true,
+        source: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+    if (!manga) {
+      throw new Error('Manga not found');
+    }
+    return {
+      chapters: manga.chapters,
+      title: manga.title,
+      url: manga.source.url,
     };
   }
 
