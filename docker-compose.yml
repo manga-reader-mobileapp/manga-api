@@ -1,0 +1,30 @@
+services:
+  mangayomi_api:
+    image: username/mangayomi-api:v0.0.1
+    environment:
+      - DATABASE_URL="postgresql://postgres:pass@localhost:5432/manga?schema=public"
+      - JWT_SECRET="your_jwt_secret_here"
+    networks:
+      - externa
+      - interna
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - 'traefik.enable=false'
+        - 'traefik.http.services.mangayomi_api.loadbalancer.server.port=3333'
+        - 'traefik.http.services.mangayomi_api.loadbalancer.passHostHeader=true'
+        - 'traefik.http.routers.mangayomi_api.service=mangayomi_api'
+        - 'traefik.http.routers.mangayomi_api.rule=Host(`api.mangayomi.com.br`)'
+        - 'traefik.http.routers.mangayomi_api.tls.certresolver=le'
+        - 'traefik.http.routers.mangayomi_api.entrypoints=websecure'
+        - 'traefik.http.routers.mangayomi_api.tls=true'
+
+networks:
+  externa:
+    external: true
+  interna:
+    external: true
