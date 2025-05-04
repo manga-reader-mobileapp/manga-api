@@ -93,6 +93,7 @@ export class MangasService {
         SavedManga: {
           select: {
             id: true,
+            categoryId: true,
           },
           where: {
             userId,
@@ -118,6 +119,7 @@ export class MangasService {
       ...(manga.History && manga.History[0]
         ? { lastChapter: manga.History[0].chapter }
         : {}),
+      categoryId: manga.SavedManga[0].categoryId,
     };
   }
 
@@ -403,5 +405,25 @@ export class MangasService {
       console.error('Error fetching history:', error);
       throw new Error('Failed to fetch reading history');
     }
+  }
+
+  async updateCategory(data: string[], categoryId: string, userId: string) {
+    await Promise.all(
+      data.map((manga) =>
+        this.prisma.savedManga.updateMany({
+          where: {
+            manga: {
+              id: manga,
+            },
+            user: {
+              id: userId,
+            },
+          },
+          data: {
+            categoryId: categoryId,
+          },
+        }),
+      ),
+    );
   }
 }

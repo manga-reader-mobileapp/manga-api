@@ -98,4 +98,16 @@ export class MangasController {
   async getHistory(@CurrentUser() user: User) {
     return this.mangasService.listHistory(user.id);
   }
+
+  @Post('/update-category')
+  async updateCategory(
+    @Body() body: { mangaId: string[]; categoryId: string },
+    @CurrentUser() user: User,
+  ) {
+    return this.mangasService.updateCategory(
+      body.mangaId,
+      body.categoryId,
+      user.id,
+    );
+  }
 }

@@ -54,7 +54,7 @@ export class CategoryService {
     });
   }
 
-  async create(name: string, userId: string) {
+  async create(userId: string) {
     const categories = await this.prisma.category.findMany({
       where: {
         userId: userId,
@@ -65,7 +65,7 @@ export class CategoryService {
 
     return await this.prisma.category.create({
       data: {
-        name: name,
+        name: `Categoria ${orderKanban}`,
         orderKanban: orderKanban,
         user: {
           connect: {
@@ -74,5 +74,18 @@ export class CategoryService {
         },
       },
     });
+  }
+
+  async modifyOrder(data: { id: string; newPosition: number }[]) {
+    for (const category of data) {
+      await this.prisma.category.update({
+        where: {
+          id: category.id,
+        },
+        data: {
+          orderKanban: category.newPosition,
+        },
+      });
+    }
   }
 }

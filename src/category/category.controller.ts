@@ -34,7 +34,12 @@ export class CategoryController {
   }
 
   @Post()
-  async create(@Body() body: { name: string }, @CurrentUser() user: User) {
-    return await this.categoryService.create(body.name, user.id);
+  async create(@CurrentUser() user: User) {
+    return await this.categoryService.create(user.id);
+  }
+
+  @Post('/modify-order')
+  async modifyOrder(@Body() body: { id: string; newPosition: number }[]) {
+    return await this.categoryService.modifyOrder(body);
   }
 }

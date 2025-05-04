@@ -60,6 +60,18 @@ async function main() {
       password: '$2a$10$cWS6wPC0Ulcjm1WhvPplXuPUAnVNlKoVLdvGsKoqYrFlPbMY4u41.', // 1234
     },
   });
+
+  await prisma.category.create({
+    data: {
+      name: 'Default',
+      orderKanban: 0,
+      user: {
+        connect: {
+          id: exist.id,
+        },
+      },
+    },
+  });
 }
 
 main();
