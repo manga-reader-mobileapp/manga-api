@@ -88,6 +88,7 @@ export class MangasService {
             id: true,
             url: true,
             name: true,
+            title: true,
           },
         },
         SavedManga: {
@@ -120,6 +121,7 @@ export class MangasService {
         ? { lastChapter: manga.History[0].chapter }
         : {}),
       categoryId: manga.SavedManga[0].categoryId,
+      sourceTitle: manga.source.title,
     };
   }
 

@@ -14,6 +14,12 @@ async function main() {
     {
       name: 'manga-livre',
       url: 'https://mangalivre.tv',
+      title: 'Manga Livre',
+    },
+    {
+      name: 'ler-mangas',
+      url: 'https://lermangas.me',
+      title: 'Ler Mangas',
     },
   ];
 
@@ -31,6 +37,7 @@ async function main() {
         },
         data: {
           url: source.url,
+          title: source.title,
         },
       });
       continue;

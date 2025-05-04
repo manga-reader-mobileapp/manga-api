@@ -63,8 +63,9 @@ model Manga {
 }
 
 model Source {
-  id   String @id @default(uuid())
-  name String @unique
+  id    String @id @default(uuid())
+  name  String @unique
+  title String @default("")
 
   url String @unique
 
