@@ -25,7 +25,7 @@ export class CategoryController {
 
   @Delete(':id')
   async delete(@CurrentUser() user: User, @Param('id') id: string) {
-    return await this.categoryService.delete(id);
+    return await this.categoryService.delete(id, user.id);
   }
 
   @Put(':id')

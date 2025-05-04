@@ -26,7 +26,16 @@ export class CategoryService {
     });
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string) {
+    const categories = await this.prisma.category.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if (categories.length === 1)
+      throw new Error('Não é possível deletar a última categoria');
+
     const mangas = await this.prisma.savedManga.findMany({
       where: { categoryId: id },
     });
