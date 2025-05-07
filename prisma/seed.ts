@@ -21,6 +21,16 @@ async function main() {
       url: 'https://lermangas.me',
       title: 'Ler Mangas',
     },
+    {
+      name: 'br-mangas',
+      url: 'https://brmangas.top',
+      title: 'Br Mangas',
+    },
+    {
+      name: 'seita-celestial',
+      url: 'https://seitacelestial.com',
+      title: 'Seita Celestial',
+    },
   ];
 
   for (const source of sources) {

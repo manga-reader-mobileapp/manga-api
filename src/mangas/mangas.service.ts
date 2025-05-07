@@ -189,6 +189,17 @@ export class MangasService {
     });
   }
 
+  async updateLastChapter(mangaId: string, chapter: string) {
+    return await this.prisma.manga.update({
+      where: {
+        id: mangaId,
+      },
+      data: {
+        chapters: chapter,
+      },
+    });
+  }
+
   async saveManga(
     url: string,
     sourceId: string,

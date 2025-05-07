@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -36,6 +37,14 @@ export class MangasController {
     @Param('mangaUrl') mangaUrl: string,
   ) {
     return this.mangasService.getInfosPages(sourceId, mangaUrl);
+  }
+
+  @Put('/last-chapter/:id')
+  async updateLastChapter(
+    @Param('id') id: string,
+    @Body() body: { chapter: string },
+  ) {
+    return this.mangasService.updateLastChapter(id, body.chapter);
   }
 
   @Post('/favorited/:sourceId')
@@ -99,7 +108,7 @@ export class MangasController {
     return this.mangasService.listHistory(user.id);
   }
 
-  @Post('/update-category')
+  @Put('/update-category')
   async updateCategory(
     @Body() body: { mangaId: string[]; categoryId: string },
     @CurrentUser() user: User,
