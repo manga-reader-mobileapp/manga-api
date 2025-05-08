@@ -23,7 +23,7 @@ async function main() {
     },
     {
       name: 'br-mangas',
-      url: 'https://brmangas.top',
+      url: 'https://flowermanga.net',
       title: 'Br Mangas',
     },
     {

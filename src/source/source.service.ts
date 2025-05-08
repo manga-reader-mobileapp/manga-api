@@ -12,4 +12,8 @@ export class SourceService {
       },
     });
   }
+
+  async findAllSources() {
+    return await this.prisma.source.findMany();
+  }
 }

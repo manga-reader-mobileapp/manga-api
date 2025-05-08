@@ -9,4 +9,9 @@ export class SourceController {
   async findUniqueSource(@Param('name') name: string) {
     return await this.sourceService.findUniqueSource(name);
   }
+
+  @Get()
+  async findAllSources() {
+    return await this.sourceService.findAllSources();
+  }
 }
