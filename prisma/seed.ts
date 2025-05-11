@@ -31,6 +31,11 @@ async function main() {
       url: 'https://seitacelestial.com',
       title: 'Seita Celestial',
     },
+    {
+      name: 'manga-dex',
+      url: 'https://api.mangadex.org',
+      title: 'MangaDex',
+    },
   ];
 
   for (const source of sources) {

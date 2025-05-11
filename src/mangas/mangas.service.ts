@@ -262,6 +262,9 @@ export class MangasService {
   }
 
   async verifySavedManga(sourceId: string, url: string, userId: string) {
+    if (!sourceId || !url || !userId) {
+      throw new Error('Missing parameters');
+    }
     const savedManga = await this.prisma.savedManga.findFirst({
       where: {
         userId,
